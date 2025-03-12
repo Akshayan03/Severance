@@ -92,50 +92,111 @@ function initMacrodataRefinement() {
                 span.className = 'data-point';
                 span.textContent = numbers[row][col] || '1';
                 span.dataset.index = row * colLimit + col;
+                span.dataset.row = row;
+                span.dataset.col = col;
                 dataField.appendChild(span);
             }
         }
+        
+        // Clear any existing animations or styles
+        clearAllAnimations();
+    }
+    
+    // New function to clear all animations from the grid
+    function clearAllAnimations() {
+        const allPoints = dataField.querySelectorAll('.data-point');
+        allPoints.forEach(point => {
+            point.classList.remove('active', 'being-selected');
+            point.removeAttribute('style');
+            point.style.color = 'rgba(0, 255, 255, 0.3)';
+            point.style.textShadow = 'none';
+        });
     }
     
     // Remove automatic cluster creation
     function createCluster() {
         if (activeCluster) return;
         
+        // First, ensure no stray animations are running
+        clearAllAnimations();
+        
         // Randomly select a cluster type (0-4 for each character)
         const clusterType = Math.floor(Math.random() * 5);
         
-        // Select a random position in the grid
-        const startRow = Math.floor(Math.random() * 8);
-        const startCol = Math.floor(Math.random() * 23);
+        // Get the actual grid dimensions
+        const colLimit = isMobile ? 10 : 25;
+        const rowLimit = 10;
         
-        // Create a cluster of 3-5 numbers
-        const clusterSize = Math.floor(Math.random() * 3) + 3;
+        // Create a safe inner area by adding padding from the edges
+        const edgePadding = 3; // Increase padding to keep clusters further from edges
+        
+        // Select a random position in the inner area of the grid
+        const startRow = edgePadding + Math.floor(Math.random() * (rowLimit - (2 * edgePadding)));
+        const startCol = edgePadding + Math.floor(Math.random() * (colLimit - (2 * edgePadding)));
+        
+        // Create a cluster of 3-4 numbers (reduced from 3-5 to ensure better fit)
+        const clusterSize = Math.floor(Math.random() * 2) + 3; // 3 or 4 elements
         const clusterElements = [];
+        const clusterIndices = new Set(); // Track indices to avoid duplicates
         
+        // Create a more compact cluster pattern
         for (let i = 0; i < clusterSize; i++) {
-            const row = startRow + Math.floor(i / 3);
-            const col = startCol + (i % 3);
-            const index = row * colLimit + col;
-            const element = dataField.children[index];
+            // Create a more compact pattern for the cluster
+            let row, col;
             
-            if (element) {
-                element.classList.add('active');
-                clusterElements.push(element);
+            // Different patterns based on cluster size
+            if (clusterSize === 3) {
+                // Triangle pattern
+                if (i === 0) { row = startRow; col = startCol; }
+                else if (i === 1) { row = startRow; col = startCol + 1; }
+                else { row = startRow + 1; col = startCol; }
+            } else {
+                // Square pattern for 4
+                row = startRow + Math.floor(i / 2);
+                col = startCol + (i % 2);
+            }
+            
+            // Double-check we're within the safe inner area
+            if (row < edgePadding || row >= rowLimit - edgePadding || 
+                col < edgePadding || col >= colLimit - edgePadding) {
+                continue; // Skip this position if it's in the edge area
+            }
+            
+            const index = row * colLimit + col;
+            
+            // Check if this index is valid and not already in the cluster
+            if (index >= 0 && index < dataField.children.length && !clusterIndices.has(index)) {
+                const element = dataField.children[index];
+                
+                if (element) {
+                    // Add to tracking set
+                    clusterIndices.add(index);
+                    
+                    // Apply the active class which triggers the CSS animations
+                    element.classList.add('active');
+                    
+                    // Make sure we're not overriding the CSS animations with inline styles
+                    element.style.transition = 'all 0.3s ease';
+                    element.style.color = '#00ffff';
+                    element.style.textShadow = '0 0 15px #00ffff';
+                    
+                    clusterElements.push(element);
+                }
             }
         }
         
-        if (clusterElements.length > 0) {
+        if (clusterElements.length >= 3) { // Ensure we have at least 3 elements
             activeCluster = {
                 type: clusterType,
-                elements: clusterElements
+                elements: clusterElements,
+                indices: Array.from(clusterIndices)
             };
             
-            // Make the cluster glow and pulse
-            clusterElements.forEach(element => {
-                element.style.transition = 'all 0.3s ease';
-                element.style.textShadow = '0 0 15px #00ffff';
-                element.style.color = '#00ffff';
-            });
+            // Log for debugging
+            console.log(`Created cluster with ${clusterElements.length} elements of type ${clusterType} at position [${startRow},${startCol}]`);
+        } else {
+            // Try again if we couldn't create a valid cluster
+            setTimeout(createCluster, 100);
         }
     }
     
@@ -151,10 +212,17 @@ function initMacrodataRefinement() {
     // Regenerate numbers after successful selection
     function regenerateNumbers(positions) {
         positions.forEach(point => {
-            point.style.opacity = '1';
-            point.style.transform = 'scale(1)';
-            point.style.textShadow = 'none';
-            point.style.color = 'rgba(0, 255, 255, 0.3)';
+            // First remove all inline styles that might interfere
+            point.removeAttribute('style');
+            
+            // Then remove the active class
+            point.classList.remove('active', 'being-selected');
+            
+            // Finally set the basic styles
+            setTimeout(() => {
+                point.style.color = 'rgba(0, 255, 255, 0.3)';
+                point.style.textShadow = 'none';
+            }, 50);
         });
     }
     
@@ -195,15 +263,43 @@ function initMacrodataRefinement() {
             y: clientY - dataField.getBoundingClientRect().top
         };
         
-        const left = Math.min(selectionStart.x, currentPos.x);
-        const top = Math.min(selectionStart.y, currentPos.y);
-        const width = Math.abs(currentPos.x - selectionStart.x);
-        const height = Math.abs(currentPos.y - selectionStart.y);
+        // Ensure selection stays within the data field boundaries
+        const fieldRect = dataField.getBoundingClientRect();
+        const left = Math.max(0, Math.min(selectionStart.x, currentPos.x));
+        const top = Math.max(0, Math.min(selectionStart.y, currentPos.y));
+        const right = Math.min(fieldRect.width, Math.max(selectionStart.x, currentPos.x));
+        const bottom = Math.min(fieldRect.height, Math.max(selectionStart.y, currentPos.y));
+        
+        const width = right - left;
+        const height = bottom - top;
         
         selectionArea.style.left = `${left}px`;
         selectionArea.style.top = `${top}px`;
         selectionArea.style.width = `${width}px`;
         selectionArea.style.height = `${height}px`;
+        
+        // Highlight numbers that are being selected
+        if (activeCluster) {
+            activeCluster.elements.forEach(point => {
+                const rect = point.getBoundingClientRect();
+                const pointCenterX = rect.left + rect.width/2;
+                const pointCenterY = rect.top + rect.height/2;
+                
+                // Check if point center is within selection
+                const isSelected = 
+                    pointCenterX >= selectionArea.getBoundingClientRect().left &&
+                    pointCenterX <= selectionArea.getBoundingClientRect().right &&
+                    pointCenterY >= selectionArea.getBoundingClientRect().top &&
+                    pointCenterY <= selectionArea.getBoundingClientRect().bottom;
+                
+                // Add/remove a visual indicator class
+                if (isSelected) {
+                    point.classList.add('being-selected');
+                } else {
+                    point.classList.remove('being-selected');
+                }
+            });
+        }
         
         // Prevent scrolling on touch devices when selecting
         if (e.touches) {
@@ -217,23 +313,23 @@ function initMacrodataRefinement() {
         isSelecting = false;
         if (selectionArea) {
             const bounds = selectionArea.getBoundingClientRect();
-            const fieldBounds = dataField.getBoundingClientRect();
             
             // Check which numbers are within selection
             if (activeCluster) {
-                const selected = activeCluster.elements.filter(point => {
-                    const rect = point.getBoundingClientRect();
-                    return (
-                        rect.left >= bounds.left &&
-                        rect.right <= bounds.right &&
-                        rect.top >= bounds.top &&
-                        rect.bottom <= bounds.bottom
-                    );
-                });
+                // Count numbers that have the being-selected class
+                const selected = activeCluster.elements.filter(point => 
+                    point.classList.contains('being-selected')
+                );
                 
-                if (selected.length === activeCluster.elements.length) {
+                // Remove the selection indicator class
+                activeCluster.elements.forEach(point => 
+                    point.classList.remove('being-selected')
+                );
+                
+                // If we selected at least half of the cluster, count it as success
+                if (selected.length >= Math.ceil(activeCluster.elements.length / 2)) {
                     // All cluster numbers selected
-                    animateNumbersToBox(selected, activeCluster.type);
+                    animateNumbersToBox(activeCluster.elements, activeCluster.type);
                 }
             }
             
@@ -245,6 +341,8 @@ function initMacrodataRefinement() {
     // Animate numbers flowing to category bin
     function animateNumbersToBox(numbers, binIndex) {
         const categoryBin = document.querySelectorAll('.category-bin')[binIndex];
+        if (!categoryBin) return; // Safety check
+        
         const binRect = categoryBin.getBoundingClientRect();
         const binCenter = {
             x: binRect.left + binRect.width / 2,
@@ -253,6 +351,9 @@ function initMacrodataRefinement() {
         
         // Create copies of numbers for animation
         numbers.forEach((point, index) => {
+            // First, remove the active class to stop animations
+            point.classList.remove('active', 'being-selected');
+            
             const rect = point.getBoundingClientRect();
             const clone = point.cloneNode(true);
             
@@ -373,11 +474,19 @@ function initMacrodataRefinement() {
     function clearCluster() {
         if (activeCluster) {
             activeCluster.elements.forEach(point => {
-                point.classList.remove('active');
-                point.style.opacity = '1'; // Reset opacity
-                point.style.textShadow = 'none';
-                point.style.color = 'rgba(0, 255, 255, 0.3)';
+                // First remove all inline styles that might interfere
+                point.removeAttribute('style');
+                
+                // Then remove all special classes
+                point.classList.remove('active', 'being-selected');
+                
+                // Finally set the basic styles
+                setTimeout(() => {
+                    point.style.color = 'rgba(0, 255, 255, 0.3)';
+                    point.style.textShadow = 'none';
+                }, 50);
             });
+            
             activeCluster = null;
             
             // Immediately try to create a new cluster
@@ -398,11 +507,15 @@ function initMacrodataRefinement() {
     // Handle window resize
     window.addEventListener('resize', function() {
         isMobile = window.innerWidth < 768;
-        generateGrid();
+        
+        // Clear any active cluster before regenerating the grid
         if (activeCluster) {
-            regenerateNumbers(activeCluster.elements);
-            activeCluster = null;
+            clearCluster();
         }
+        
+        // Clear all animations and regenerate grid
+        clearAllAnimations();
+        generateGrid();
     });
     
     // Initialize
