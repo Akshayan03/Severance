@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumon Industries</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="images/lumon-logo.svg" alt="Lumon Industries" id="logo">
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#severance">Severance</a></li>
+                    <li><a href="#careers">Careers</a></li>
+                    <li><a href="#macrodata">Macrodata Refinement</a></li>
+                    <li><a href="#intranet" class="intranet-link">Intranet</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h1>Welcome to Lumon Industries</h1>
+                <p>Serving humanity since 1866.</p>
+            </section>
+
+            <section id="about" class="section">
+                <h2>About Lumon</h2>
+                <p>At Lumon Industries, we believe in the power of innovation to transform lives. Our groundbreaking work in biotechnology has positioned us at the forefront of human advancement.</p>
+                <p>Through the guidance of our founder Kier Eagan's nine core principles, we continue to push the boundaries of what's possible.</p>
+            </section>
+
+            <section id="severance" class="section">
+                <h2>Severance</h2>
+                <p>The work Lumon Industries has invested in cutting-edge biotechnology has culminated in our Severance technology. The Severance Microchip is the heart of our life-changing Severance Procedure, which enables the ultimate in work-life balance.</p>
+                <div class="severance-image">
+                    <img src="images/severance-chip.svg" alt="Severance Microchip">
+                </div>
+                <p>Experience a complete separation between your work and personal life. Your work self will never remember your home life, and your home self will never remember your work life.</p>
+            </section>
+
+            <section id="macrodata" class="section">
+                <h2>Macrodata Refinement</h2>
+                <p>Our Macrodata Refinement Division is responsible for processing critical numerical sequences that drive Lumon's innovations forward.</p>
+                <div class="mdr-simulator">
+                    <div class="mdr-interface" id="mdrInterface">
+                        <div class="crt-effect"></div>
+                        <div class="screen-flicker"></div>
+                        <div class="mdr-header">
+                            <span class="mdr-title">Cold Harbour</span>
+                            <span class="mdr-completion">47% Complete</span>
+                        </div>
+                        <div class="data-field" id="dataField"></div>
+                        <div class="category-bins">
+                            <div class="category-bin" data-type="0">MARK S</div>
+                            <div class="category-bin" data-type="1">HELLY R</div>
+                            <div class="category-bin" data-type="2">IRVING B</div>
+                            <div class="category-bin" data-type="3">DYLAN G</div>
+                            <div class="category-bin" data-type="4">MILCHICK</div>
+                        </div>
+                        <div class="progress-bars">
+                            <div class="progress-bar">
+                                <div class="progress-bar-label">00</div>
+                                <div class="progress-bar-fill" style="width: 34%"></div>
+                                <div class="progress-bar-value">34%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-label">01</div>
+                                <div class="progress-bar-fill" style="width: 20%"></div>
+                                <div class="progress-bar-value">20%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-label">02</div>
+                                <div class="progress-bar-fill" style="width: 38%"></div>
+                                <div class="progress-bar-value">38%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-label">03</div>
+                                <div class="progress-bar-fill" style="width: 40%"></div>
+                                <div class="progress-bar-value">40%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-label">04</div>
+                                <div class="progress-bar-fill" style="width: 76%"></div>
+                                <div class="progress-bar-value">76%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="character-comparison" class="section">
+                <h2>Character Analysis: Helly R vs Gemma</h2>
+                <div class="character-comparison">
+                    <div class="comparison-content">
+                        <h3>Why Helly R is Superior</h3>
+                        <ul class="comparison-list">
+                            <li>Helly's rebellious spirit and determination make her a more dynamic character</li>
+                            <li>Her striking appearance and confident demeanor command attention in every scene</li>
+                            <li>Complex character development from defiant newcomer to key player</li>
+                            <li>Creates more engaging and memorable moments through her interactions</li>
+                            <li>Shows incredible strength in challenging the system</li>
+                        </ul>
+                        <div class="comparison-verdict">
+                            <p class="verdict-text">While Gemma/Ms. Casey serves a mysterious role, Helly R's character brings more depth, energy, and compelling storylines to the show. Her determination to break free and discover the truth makes her journey far more engaging.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="careers" class="section">
+                <h2>Careers</h2>
+                <p>Join the Lumon family and be part of something greater than yourself. We offer competitive benefits and a supportive work environment.</p>
+                <p>Current openings:</p>
+                <ul class="job-listings">
+                    <li>Macrodata Refinement Specialist</li>
+                    <li>Optics and Design Technician</li>
+                    <li>Wellness Counselor</li>
+                    <li>Security Officer</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2023 Lumon Industries. All rights reserved.</p>
+                <a href="#legal">Legal</a>
+            </div>
+        </footer>
+    </div>
+
+    <div class="intranet-portal" id="intranetPortal">
+        <div class="portal-content">
+            <h2>Lumon Intranet</h2>
+            <p>Please enter your employee credentials</p>
+            <form id="intranetForm">
+                <div class="form-group">
+                    <label for="employeeId">Employee ID</label>
+                    <input type="text" id="employeeId" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <button class="close-portal" id="closePortal">×</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

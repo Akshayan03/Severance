@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <style>
+    .chip-base {
+      fill: #1c3b57;
+    }
+    .chip-circuit {
+      fill: none;
+      stroke: #00a86b;
+      stroke-width: 1.5;
+    }
+    .chip-highlight {
+      fill: #00a86b;
+      opacity: 0.3;
+    }
+    .chip-center {
+      fill: #00a86b;
+    }
+  </style>
+  
+  <!-- Chip Base -->
+  <rect class="chip-base" x="50" y="50" width="100" height="100" rx="5" ry="5"/>
+  
+  <!-- Circuit Patterns -->
+  <path class="chip-circuit" d="M50,80 H30 M50,120 H30 M150,80 H170 M150,120 H170 M80,50 V30 M120,50 V30 M80,150 V170 M120,150 V170"/>
+  <path class="chip-circuit" d="M60,60 H140 V140 H60 V60 Z"/>
+  <path class="chip-circuit" d="M70,70 H130 V130 H70 V70 Z"/>
+  <path class="chip-circuit" d="M50,80 H60 M50,120 H60 M150,80 H140 M150,120 H140 M80,50 H80 M120,50 H120 M80,150 H80 M120,150 H120"/>
+  
+  <!-- Center Highlight -->
+  <rect class="chip-highlight" x="70" y="70" width="60" height="60" rx="2" ry="2"/>
+  
+  <!-- Center Element -->
+  <circle class="chip-center" cx="100" cy="100" r="15"/>
+  
+  <!-- Connection Points -->
+  <rect x="55" y="70" width="5" height="10" fill="#00a86b"/>
+  <rect x="55" y="120" width="5" height="10" fill="#00a86b"/>
+  <rect x="140" y="70" width="5" height="10" fill="#00a86b"/>
+  <rect x="140" y="120" width="5" height="10" fill="#00a86b"/>
+  <rect x="70" y="55" width="10" height="5" fill="#00a86b"/>
+  <rect x="120" y="55" width="10" height="5" fill="#00a86b"/>
+  <rect x="70" y="140" width="10" height="5" fill="#00a86b"/>
+  <rect x="120" y="140" width="10" height="5" fill="#00a86b"/>
+</svg> 
