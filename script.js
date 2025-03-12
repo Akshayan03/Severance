@@ -63,12 +63,13 @@ function initMacrodataRefinement() {
     let selectionArea = null;
     let activeCluster = null;
     let totalProgress = 0;
+    let isMobile = window.innerWidth < 768;
     
     // Initialize the grid
     function generateGrid() {
         dataField.innerHTML = '';
         
-        // Create 10x25 grid of static numbers matching the image
+        // Create grid of numbers - for mobile, we'll use a smaller grid
         const numbers = [
             "057713405702175604826",
             "358902915154093966189",
@@ -82,12 +83,15 @@ function initMacrodataRefinement() {
             "791724609349309733900"
         ];
         
+        // For mobile, we'll only show the first 10 columns to make numbers bigger and more tappable
+        const colLimit = isMobile ? 10 : 25;
+        
         for (let row = 0; row < 10; row++) {
-            for (let col = 0; col < 25; col++) {
+            for (let col = 0; col < colLimit; col++) {
                 const span = document.createElement('span');
                 span.className = 'data-point';
                 span.textContent = numbers[row][col] || '1';
-                span.dataset.index = row * 25 + col;
+                span.dataset.index = row * colLimit + col;
                 dataField.appendChild(span);
             }
         }
@@ -111,7 +115,7 @@ function initMacrodataRefinement() {
         for (let i = 0; i < clusterSize; i++) {
             const row = startRow + Math.floor(i / 3);
             const col = startCol + (i % 3);
-            const index = row * 25 + col;
+            const index = row * colLimit + col;
             const element = dataField.children[index];
             
             if (element) {
@@ -159,22 +163,36 @@ function initMacrodataRefinement() {
         if (!activeCluster) return;
         
         isSelecting = true;
+        
+        // Handle both mouse and touch events
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
         selectionStart = {
-            x: e.clientX - dataField.getBoundingClientRect().left,
-            y: e.clientY - dataField.getBoundingClientRect().top
+            x: clientX - dataField.getBoundingClientRect().left,
+            y: clientY - dataField.getBoundingClientRect().top
         };
         
         selectionArea = document.createElement('div');
         selectionArea.className = 'selection-area';
         dataField.appendChild(selectionArea);
+        
+        // Prevent scrolling on touch devices when selecting
+        if (e.touches) {
+            e.preventDefault();
+        }
     }
     
     function updateSelection(e) {
         if (!isSelecting || !selectionStart) return;
         
+        // Handle both mouse and touch events
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
         const currentPos = {
-            x: e.clientX - dataField.getBoundingClientRect().left,
-            y: e.clientY - dataField.getBoundingClientRect().top
+            x: clientX - dataField.getBoundingClientRect().left,
+            y: clientY - dataField.getBoundingClientRect().top
         };
         
         const left = Math.min(selectionStart.x, currentPos.x);
@@ -186,6 +204,11 @@ function initMacrodataRefinement() {
         selectionArea.style.top = `${top}px`;
         selectionArea.style.width = `${width}px`;
         selectionArea.style.height = `${height}px`;
+        
+        // Prevent scrolling on touch devices when selecting
+        if (e.touches) {
+            e.preventDefault();
+        }
     }
     
     function endSelection() {
@@ -362,13 +385,34 @@ function initMacrodataRefinement() {
         }
     }
     
-    // Initialize
-    generateGrid();
-    
-    // Event listeners
+    // Add event listeners for both mouse and touch events
     dataField.addEventListener('mousedown', startSelection);
     dataField.addEventListener('mousemove', updateSelection);
-    document.addEventListener('mouseup', endSelection);
+    dataField.addEventListener('mouseup', endSelection);
+    
+    // Add touch event listeners
+    dataField.addEventListener('touchstart', startSelection, { passive: false });
+    dataField.addEventListener('touchmove', updateSelection, { passive: false });
+    dataField.addEventListener('touchend', endSelection);
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        isMobile = window.innerWidth < 768;
+        generateGrid();
+        if (activeCluster) {
+            regenerateNumbers(activeCluster.elements);
+            activeCluster = null;
+        }
+    });
+    
+    // Initialize
+    generateGrid();
+    scheduleNewCluster();
+    
+    // Add scan line effect
+    const scanLine = document.createElement('div');
+    scanLine.className = 'scan-line';
+    dataField.appendChild(scanLine);
     
     // Remove automatic cluster creation and screen effects
     function addScreenEffects() {
@@ -378,12 +422,4 @@ function initMacrodataRefinement() {
     
     // Add CRT effects
     addScreenEffects();
-    
-    // Start creating clusters and ensure they keep going
-    scheduleNewCluster();
-    setInterval(() => {
-        if (!activeCluster) {
-            createCluster();
-        }
-    }, 3000);
 } 

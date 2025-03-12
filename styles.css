@@ -575,6 +575,88 @@ footer a {
         max-width: 600px;
         margin: 1rem auto;
     }
+    
+    .mobile-instruction {
+        display: none;
+    }
+}
+
+/* Mobile-specific styles for MDR simulator */
+@media (max-width: 767px) {
+    .data-field {
+        height: 60vh;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 0.8rem;
+        font-size: 1rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1rem 0.5rem;
+    }
+    
+    .data-point {
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 0.9rem;
+    }
+    
+    .category-bins {
+        flex-wrap: wrap;
+    }
+    
+    .category-bin {
+        flex: 0 0 48%;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        height: 25px;
+    }
+    
+    .mdr-interface {
+        min-height: 60vh;
+        padding: 0.5rem;
+    }
+    
+    .mdr-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .progress-bars {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .progress-bar {
+        height: 15px;
+    }
+    
+    .progress-bar-label {
+        top: -20px;
+        font-size: 0.8rem;
+    }
+    
+    .progress-bar-value {
+        bottom: -20px;
+        font-size: 0.8rem;
+    }
+    
+    /* Make touch interactions work better */
+    .data-point.active {
+        transform: scale(1.3);
+    }
+    
+    .mobile-instruction {
+        display: block;
+        background-color: rgba(0, 168, 107, 0.1);
+        border: 1px solid var(--lumon-green);
+        color: var(--lumon-green);
+        padding: 0.5rem;
+        text-align: center;
+        border-radius: 4px;
+        margin: 1rem 0;
+        font-weight: 500;
+    }
 }
 
 /* Character Comparison Section */
