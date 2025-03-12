@@ -261,27 +261,19 @@ main {
 }
 
 .data-point {
-    position: relative;
-    width: auto;
-    height: auto;
-    background-color: transparent;
-    border-radius: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
     color: rgba(0, 255, 255, 0.3);
-    cursor: crosshair;
-    user-select: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
 }
 
 .data-point.active {
     color: #00ffff;
     text-shadow: 0 0 15px #00ffff;
-    transform: scale(1.1);
-    z-index: 2;
+    animation: jiggle 0.5s ease-in-out infinite, scaleUp 0.5s ease-in-out infinite;
 }
 
 .selection-area {
@@ -639,4 +631,16 @@ footer a {
     font-size: 1.1rem;
     line-height: 1.6;
     margin: 0;
+}
+
+@keyframes jiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-2deg); }
+    75% { transform: rotate(2deg); }
+}
+
+@keyframes scaleUp {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 } 
